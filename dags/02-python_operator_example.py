@@ -2,8 +2,15 @@ from airflow import DAG
 from airflow.operators.python import PythonOperator
 from datetime import datetime
 
-def function_example():
-    print("Testando minha primeira função python")
+def function_example(position:str):
+    """
+    Função responsável por printar na tela um texto teste
+
+    Args:
+        posicao(str): determina a posicao desejada para ser colocada na string
+    """
+
+    print(f"Testando minha {position} função python")
 
 
 with DAG(
@@ -12,5 +19,14 @@ with DAG(
 
     task1 = PythonOperator(
         task_id = 'first_function',
-        python_callable = function_example
+        python_callable = function_example,
+        op_args = ['first']
+    )
+
+    task2 = PythonOperator(
+        task_id = 'second_function',
+        python_callable = function_example,
+        op_kwargs = { # recebe dicionário
+            'position' : 'second'
+        }
     )
