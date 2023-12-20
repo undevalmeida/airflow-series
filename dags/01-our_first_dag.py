@@ -19,7 +19,7 @@ task1 >> task2 >> task3
 with DAG(
     dag_id='01-our_first_dag'
     , start_date=datetime(2023,12,18)
-    , schedule='@daily') as dag:
+    , schedule='@daily') as dag: # first execution = start_date + schedule_interval ou seja, considerando a data colocada no start date, só será executado no dia seguinte <-'2023,12,19'
 
     task1 = EmptyOperator(task_id='extract',dag=dag)
     task2 = EmptyOperator(task_id='transform',dag=dag)
