@@ -16,7 +16,10 @@ task1 >> task2 >> task3
 
 # Boa
 
-with DAG(dag_id='01-our_first_dag', start_date=datetime(2023,12,18)) as dag:
+with DAG(
+    dag_id='01-our_first_dag'
+    , start_date=datetime(2023,12,18)
+    , schedule='@daily') as dag:
 
     task1 = EmptyOperator(task_id='extract',dag=dag)
     task2 = EmptyOperator(task_id='transform',dag=dag)
