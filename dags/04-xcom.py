@@ -32,15 +32,21 @@ def ingest(**kwargs):
 
     #max_contribution_row = df_melted[df_melted['contribution']==max_contribution]
     #min_contribution_row = df_melted[df_melted['contribution']==min_contribution]
-    
+    """ 
     ti = kwargs['ti']
     ti.xcom_push(key='max_contribution', value=max_contribution)
-    ti.xcom_push(key='min_contribution', value=min_contribution)
+    ti.xcom_push(key='min_contribution', value=min_contribution) """
+    return{'max_contribution':max_contribution, 'min_contribution':min_contribution}
 
 def consume(ti):
 
+    return_value = ti.xcom_pull(key='return_value', task_ids='ingest')
+    """ 
     max_contribution = ti.xcom_pull(key='max_contribution', task_ids='ingest')
-    min_contribution = ti.xcom_pull(key='min_contribution', task_ids='ingest')
+    min_contribution = ti.xcom_pull(key='min_contribution', task_ids='ingest') """
+
+    max_contribution = return_value['max_contribution']
+    min_contribution = return_value['min_contribution']
 
     print(f'max_contribution {max_contribution}')
     print(f'min_contribution {min_contribution}')
