@@ -3,7 +3,7 @@ from airflow.operators.python import PythonOperator
 
 from datetime import datetime
 
-def ingest():
+def ingest(**kwargs):
     import pandas as pd
     url = 'https://www.gov.br/anp/pt-br/centrais-de-conteudo/dados-abertos/arquivos/vendas-gasolina-c-m3-2020.csv'
 
@@ -30,13 +30,29 @@ def ingest():
     max_contribution = df_melted['contribution'].max()
     min_contribution = df_melted[df_melted['contribution']!= 0]['contribution'].min()
 
-    # max_contribution_row = df_melted[df_melted['contribution']==max_contribution]
-    # min_contribution_row = df_melted[df_melted['contribution']==min_contribution]
+    #max_contribution_row = df_melted[df_melted['contribution']==max_contribution]
+    #min_contribution_row = df_melted[df_melted['contribution']==min_contribution]
+    
+    ti = kwargs['ti']
+    ti.xcom_push(key='max_contribution', value=max_contribution)
+    ti.xcom_push(key='min_contribution', value=min_contribution)
+
+def consume(ti):
+
+    max_contribution = ti.xcom_pull(key='max_contribution', task_ids='ingest')
+    min_contribution = ti.xcom_pull(key='min_contribution', task_ids='ingest')
+
+    print(f'max_contribution {max_contribution}')
+    print(f'min_contribution {min_contribution}')
 
 with DAG(
     dag_id='04-xcoms'
-    , start_date=datetime(2023, 12, 21)) as dag:
+    , start_date=datetime(2023, 12, 21)
+    , schedule=None
+    ) as dag:
 
-    task1 = PythonOperator(task_id='ingest', python_callable=)
+    task1 = PythonOperator(task_id='ingest', python_callable=ingest)
 
-    task2 = PythonOperator(task_id='consume', python_callable=)
+    task2 = PythonOperator(task_id='consume', python_callable=consume)
+
+    task1 >> task2
