@@ -38,19 +38,22 @@ def ingest(**kwargs):
     ti.xcom_push(key='min_contribution', value=min_contribution) """
     return{'max_contribution':max_contribution, 'min_contribution':min_contribution}
 
-def consume(ti):
+def consume(xcom):
+    from json import loads
 
-    return_value = ti.xcom_pull(key='return_value', task_ids='ingest')
+    return_value = loads(xcom.replace("'", '"')) # Fazendo replace porque o json contém apenas aspas duplas
     """ 
     max_contribution = ti.xcom_pull(key='max_contribution', task_ids='ingest')
     min_contribution = ti.xcom_pull(key='min_contribution', task_ids='ingest') """
-
+    
     max_contribution = return_value['max_contribution']
     min_contribution = return_value['min_contribution']
-
+   
+    print(return_value)
+    print(f"tipo de dado: {type(return_value)}")
+    
     print(f'max_contribution {max_contribution}')
     print(f'min_contribution {min_contribution}')
-
 with DAG(
     dag_id='04-xcoms'
     , start_date=datetime(2023, 12, 21)
@@ -59,6 +62,12 @@ with DAG(
 
     task1 = PythonOperator(task_id='ingest', python_callable=ingest)
 
-    task2 = PythonOperator(task_id='consume', python_callable=consume)
+    task2 = PythonOperator(
+        task_id='consume'
+        , python_callable=consume
+        , op_kwargs={
+            'xcom' : "{{ti.xcom_pull(key='return_value', task_ids='ingest')}}"
+        }
+        )
 
     task1 >> task2
