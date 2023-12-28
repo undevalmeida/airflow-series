@@ -1,3 +1,14 @@
+""" 
+Xcoms são armazenadas no banco de dados do Airflow (postgres no nosso caso)
+
+Xcoms são limitadas em tamanho:
+    SQLITE: up to 2gb in one xcom.
+    POSTGRES: up to 1gb in one xcom.
+    MYSQL: up to 64kb in xcoms.
+
+Não processe grande quantidade de dados (TB, GBS) usando xcoms.
+"""
+
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 
