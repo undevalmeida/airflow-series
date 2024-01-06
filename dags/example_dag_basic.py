@@ -1,10 +1,7 @@
 import json
 from pendulum import datetime
 
-from airflow.decorators import (
-    dag,
-    task,
-)  # DAG and task decorators for interfacing with the TaskFlow API
+from airflow.decorators import dag, task  # DAG and task decorators for interfacing with the TaskFlow API
 
 
 # When using the DAG decorator, The "dag_id" value defaults to the name of the function
@@ -76,6 +73,16 @@ def example_dag_basic():
     order_data = extract()
     order_summary = transform(order_data)
     load(order_summary["total_order_value"])
+
+    """
+    Forma menos complicada de entender as dependencias de task's
+
+    order_data = extract()
+    order_summary = transform(order_data)
+    task_load = load(order_summary["total_order_value"])
+
+    order_data >> order_summary >> task_load
+    """
 
 
 example_dag_basic()
