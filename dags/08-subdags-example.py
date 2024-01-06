@@ -11,18 +11,18 @@ def subdag(parent_dag_name, child_dag_name, args):
         dag_id=f"{parent_dag_name}.{child_dag_name}",
         default_args=args,
         schedule=None,
-        start_date=datetime(2024-1-4)
+        start_date=datetime(2024,1,4)
     )
 
-    task1 = EmptyOperator(task_id="task_subdag", dag=subdag)
-    task2 = EmptyOperator(task_id="task_subdag", dag=subdag)
-    task3 = EmptyOperator(task_id="task_subdag", dag=subdag)
-    task4 = EmptyOperator(task_id="task_subdag", dag=subdag)
+    task1 = EmptyOperator(task_id="task1_subdag", dag=subdag)
+    task2 = EmptyOperator(task_id="task2_subdag", dag=subdag)
+    task3 = EmptyOperator(task_id="task3_subdag", dag=subdag)
+    task4 = EmptyOperator(task_id="task4_subdag", dag=subdag)
 
     task1_2 = EmptyOperator(task_id="task1_2_subdag", dag=subdag)
-    task2_2 = EmptyOperator(task_id="task1_2_subdag", dag=subdag)
-    task3_2 = EmptyOperator(task_id="task1_2_subdag", dag=subdag)
-    task4_2 = EmptyOperator(task_id="task1_2_subdag", dag=subdag)
+    task2_2 = EmptyOperator(task_id="task2_2_subdag", dag=subdag)
+    task3_2 = EmptyOperator(task_id="task3_2_subdag", dag=subdag)
+    task4_2 = EmptyOperator(task_id="task4_2_subdag", dag=subdag)
 
     task1 >> task1_2
     task2 >> task2_2
@@ -31,7 +31,7 @@ def subdag(parent_dag_name, child_dag_name, args):
 
     return subdag
 
-with DAG("08-subdag-example", start_date=datetime(2024-1-4), schedule_interval="@daily") as dag:
+with DAG("08-subdag-example", start_date=datetime(2024,1,4), schedule_interval="@daily") as dag:
     # DEfine tasks in the main DAG
     task1 = EmptyOperator(task_id="task1_parent_dag")
     task2 = EmptyOperator(task_id="task2_parent_dag")
